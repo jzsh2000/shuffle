@@ -31,11 +31,11 @@ for(pos in 1:26) {
     # print(freq.pos.table)
     freq.pos.frame <- data.frame(card=names(freq.pos.table), freq=as.vector(freq.pos.table), pos=pos)
     freq.pos.frame$test <- sapply(freq.pos.frame$freq, function(x){binom.test(x, sum(freq.pos.frame$freq), p = 1/52)$p.value})
-    freq.pos.frame$test.conf[freq.pos.frame$test<0.0001]="p < 0.0001"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.0001]="p < 0.001"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.001]="p < 0.01"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.01]="p < 0.05"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.05]="p >= 0.05"
+    freq.pos.frame$test.conf[freq.pos.frame$test<0.0001]="0.0001"
+    freq.pos.frame$test.conf[freq.pos.frame$test>=0.0001]="0.001"
+    freq.pos.frame$test.conf[freq.pos.frame$test>=0.001]="0.01"
+    freq.pos.frame$test.conf[freq.pos.frame$test>=0.01]="0.05"
+    freq.pos.frame$test.conf[freq.pos.frame$test>=0.05]="1"
 
     if(!exists("freq.frame")) {
 	freq.frame = freq.pos.frame
@@ -43,6 +43,8 @@ for(pos in 1:26) {
 	freq.frame = rbind(freq.frame, freq.pos.frame)
     }
 }
+
+write.table(freq.frame, paste0(shuffle.file,".test"), sep="\t", quote=FALSE, row.names=FALSE)
 
 library(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
 
