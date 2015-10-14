@@ -21,8 +21,7 @@ if (!file.exists(args[1])) {
 }
 
 testfile=args[1]
-testdata <- read.delim(testfile)
-testdata$test.conf = as.character(testdata$test.conf)
+testdata <- read.delim(testfile, colClasses=c("factor","numeric","numeric","numeric","factor"))
 
 library(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
 
