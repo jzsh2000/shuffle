@@ -7,7 +7,7 @@
 args=commandArgs(trailingOnly = TRUE)
 
 usage <- function() {
-    cat("Usage: $0 [shuffle.test]...\n")
+    cat("Usage: $0 [shuffle.test]... > all.test\n")
     q()
 }
 
@@ -53,7 +53,6 @@ testdata.rep <- sum(testdata$freq)/max(testdata$pos)
 
 # The step below is very slow
 testdata$test <- sapply(testdata$freq, function(x){binom.test(x, testdata.rep, p = 1/testdata.cards)$p.value})
-write.table(testdata, "poker.test.txt", sep="\t", quote=FALSE, row.names=FALSE)
 
 testdata$test.conf[testdata$test<0.0001]="0.0001"
 testdata$test.conf[testdata$test>=0.0001]="0.001"
@@ -61,9 +60,5 @@ testdata$test.conf[testdata$test>=0.001]="0.01"
 testdata$test.conf[testdata$test>=0.01]="0.05"
 testdata$test.conf[testdata$test>=0.05]="1"
 
-library(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
-plot.obj <- ggplot(testdata, aes(x=pos, y=freq, fill=test.conf))+geom_bar(stat="identity", colour="white", width=1)+scale_x_continuous(breaks=1:max(testdata$pos))
-ggsave(plot = plot.obj, filename="poker.test.pdf", height=6, width=8)
-
+write.table(testdata, sep="\t", quote=FALSE, row.names=FALSE)
 detach('package:plyr')
-detach('package:ggplot2')
