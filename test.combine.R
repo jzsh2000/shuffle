@@ -54,11 +54,5 @@ testdata.rep <- sum(testdata$freq)/max(testdata$pos)
 # The step below is very slow
 testdata$test <- sapply(testdata$freq, function(x){binom.test(x, testdata.rep, p = 1/testdata.cards)$p.value})
 
-testdata$test.conf[testdata$test<0.0001]="0.0001"
-testdata$test.conf[testdata$test>=0.0001]="0.001"
-testdata$test.conf[testdata$test>=0.001]="0.01"
-testdata$test.conf[testdata$test>=0.01]="0.05"
-testdata$test.conf[testdata$test>=0.05]="1"
-
 write.table(testdata, sep="\t", quote=FALSE, row.names=FALSE)
 detach('package:plyr')

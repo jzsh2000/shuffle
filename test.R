@@ -39,11 +39,6 @@ for(pos in 1:ncol(shuffle.out)) {
     # print(freq.pos.table)
     freq.pos.frame <- data.frame(card=names(freq.pos.table), freq=as.vector(freq.pos.table), pos=pos)
     freq.pos.frame$test <- sapply(freq.pos.frame$freq, function(x){binom.test(x, sum(freq.pos.frame$freq), p = 1/length(cards))$p.value})
-    freq.pos.frame$test.conf[freq.pos.frame$test<0.0001]="0.0001"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.0001]="0.001"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.001]="0.01"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.01]="0.05"
-    freq.pos.frame$test.conf[freq.pos.frame$test>=0.05]="1"
 
     if(!exists("freq.frame")) {
 	freq.frame = freq.pos.frame
@@ -58,8 +53,5 @@ library(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
 
 plot.obj <- ggplot(freq.frame, aes(x=pos, y=freq, fill=card))+geom_bar(stat="identity", colour="white", width=1)+guides(fill=FALSE)+scale_x_continuous(breaks=1:26)
 ggsave(plot = plot.obj, filename=paste0(output.prefix,".",shuffle.length,".pdf"), height=6, width=8)
-
-plot.obj <- ggplot(freq.frame, aes(x=pos, y=freq, fill=test.conf))+geom_bar(stat="identity", colour="white", width=1)+scale_x_continuous(breaks=1:26)
-ggsave(plot = plot.obj, filename=paste0(output.prefix,".",shuffle.length,".test.pdf"), height=6, width=8)
 
 detach('package:ggplot2')
