@@ -32,11 +32,11 @@ value=c(2:9,0,"J","Q","K","A")
 # 长度为52的向量，分别表示每张牌
 cards <- unlist(lapply(shape, function(x){paste0(x, value)}))
 
-for(pos in 1:26) {
+for(pos in 1:ncol(shuffle.out)) {
     freq.pos.table <- table(shuffle.out[,pos])
     # print(freq.pos.table)
     freq.pos.frame <- data.frame(card=names(freq.pos.table), freq=as.vector(freq.pos.table), pos=pos)
-    freq.pos.frame$test <- sapply(freq.pos.frame$freq, function(x){binom.test(x, sum(freq.pos.frame$freq), p = 1/52)$p.value})
+    freq.pos.frame$test <- sapply(freq.pos.frame$freq, function(x){binom.test(x, sum(freq.pos.frame$freq), p = 1/length(cards))$p.value})
     freq.pos.frame$test.conf[freq.pos.frame$test<0.0001]="0.0001"
     freq.pos.frame$test.conf[freq.pos.frame$test>=0.0001]="0.001"
     freq.pos.frame$test.conf[freq.pos.frame$test>=0.001]="0.01"
