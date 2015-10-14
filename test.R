@@ -7,7 +7,7 @@
 args=commandArgs(trailingOnly = TRUE)
 
 if (length(args)==0) {
-    cat("Usage: $0 [shuffle.out.txt]\n")
+    cat("Usage: $0 <SHUFFLE.OUT> [NROW]\n")
     q()
 }
 
@@ -17,6 +17,8 @@ if (!file.exists(args[1])) {
 }
 
 shuffle.file=args[1]
+output.prefix=gsub("\\.gz$","",args[1])
+
 shuffle.length=as.numeric(args[2])
 if(is.na(shuffle.length)||!is.numeric(shuffle.length)) {
     shuffle.length = -1
@@ -50,14 +52,14 @@ for(pos in 1:ncol(shuffle.out)) {
     }
 }
 
-write.table(freq.frame, paste0(shuffle.file,".",shuffle.length,".test"), sep="\t", quote=FALSE, row.names=FALSE)
+write.table(freq.frame, paste0(output.prefix,".",shuffle.length,".test"), sep="\t", quote=FALSE, row.names=FALSE)
 
 library(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
 
 plot.obj <- ggplot(freq.frame, aes(x=pos, y=freq, fill=card))+geom_bar(stat="identity", colour="white", width=1)+guides(fill=FALSE)+scale_x_continuous(breaks=1:26)
-ggsave(plot = plot.obj, filename=paste0(shuffle.file,".",shuffle.length,".pdf"), height=6, width=8)
+ggsave(plot = plot.obj, filename=paste0(output.prefix,".",shuffle.length,".pdf"), height=6, width=8)
 
 plot.obj <- ggplot(freq.frame, aes(x=pos, y=freq, fill=test.conf))+geom_bar(stat="identity", colour="white", width=1)+scale_x_continuous(breaks=1:26)
-ggsave(plot = plot.obj, filename=paste0(shuffle.file,".",shuffle.length,".test.pdf"), height=6, width=8)
+ggsave(plot = plot.obj, filename=paste0(output.prefix,".",shuffle.length,".test.pdf"), height=6, width=8)
 
 detach('package:ggplot2')
