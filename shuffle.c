@@ -143,7 +143,7 @@ void shuffle_arr(char* arr)
 
 int main(int argc,char *argv[])
 {
-    int i, rep_i, rep=0;
+    int i, rep_i, rep=-1;
     char tempArr[MAXLEN]={0};
     int file_n=0;
 
@@ -188,7 +188,8 @@ int main(int argc,char *argv[])
     // -f 选项开，则根据随机数文件生成随机牌局
     if(file_n > 0 && (fp_r = fopen(argv[file_n],"r")))
     {
-	for(rep_i=0; fp_r && rep_i<rep; rep_i++)
+	// 未设置输出行数时，默认读完随机数文件
+	for(rep_i=0; fp_r && rep_i!=rep; rep_i++)
 	{
 	    strncpy(tempArr, OriginArr, MAXLEN);
 	    if(!shuffle_arr_fp(tempArr, fp_r))
