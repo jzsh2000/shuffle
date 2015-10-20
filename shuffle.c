@@ -28,6 +28,25 @@ const char OriginArr[MAXLEN]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
 // i*floor(100/i)-1
 const char RandomIntCeiling[MAXLEN-1]={99,98,99,99,95,97,95,98,99,98,95,90,97,89,95,84,89,94,99,83,87,91,95,99,77,80,83,86,89,92,95,98,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99,50,51};
 
+void usage(const char* arg)
+{
+    printf("Usage: %s [-f FILE] [NUMBER]\n", arg);
+}
+
+int check_num(const char* arg)
+{
+    int i;
+    /* printf("%d\n", strlen(arg)); */
+    for(i=0; i<strlen(arg); i++)
+    {
+	if(arg[i]<'0' || arg[i]>'9')
+	{
+	    return 0;
+	}
+    }
+    return 1;
+}
+
 // 根据数字序列打印具体的牌局序列
 void print_arr(char* arr)
 {
@@ -124,22 +143,52 @@ void shuffle_arr(char* arr)
 
 int main(int argc,char *argv[])
 {
-    int rep_i, rep;
+    int i, rep_i, rep=0;
     char tempArr[MAXLEN]={0};
+    int file_n=0;
 
     if(argc==1)
     {
-	printf("Usage: %s [NUMBER]|[FILE]\n", argv[0]);
+	usage(argv[0]);
 	return 0;
+    }
+
+    for(i=1; i<argc; i++)
+    {
+	/* printf("%s\n", argv[i]); */
+	if(strcmp(argv[i], "-f")==0)
+	{
+	    file_n=++i;
+	    
+	    /* 若 -f 是最后一个参数 */
+	    if(file_n >= argc)
+	    {
+		usage(argv[0]);
+		return 1;
+	    }
+	    else
+	    {
+		continue;
+	    }
+	}
+
+	if(!check_num(argv[i]))
+	{
+	    usage(argv[0]);
+	    return 1;
+	}
+	else
+	{
+	    rep=atoi(argv[i]);
+	}
     }
 
     FILE *fp_r;
     /* printf("%s\n", argv[1]); */
-    // 当参数为文件时，根据随机数文件中生成随机牌局
-    // 否则使用系统的随机数发生器
-    if(fp_r = fopen(argv[1],"r"))
+    // -f 选项开，则根据随机数文件生成随机牌局
+    if(file_n > 0 && (fp_r = fopen(argv[file_n],"r")))
     {
-	while(fp_r)
+	for(rep_i=0; fp_r && rep_i<rep; rep_i++)
 	{
 	    strncpy(tempArr, OriginArr, MAXLEN);
 	    if(!shuffle_arr_fp(tempArr, fp_r))
@@ -150,10 +199,10 @@ int main(int argc,char *argv[])
 	}
 	fclose(fp_r);
     }
+
+    // 使用系统的随机数发生器
     else
     {
-	rep=atoi(argv[1]);
-
 	for(rep_i=0; rep_i<rep; rep_i++)
 	{
 	    strncpy(tempArr, OriginArr, MAXLEN);
