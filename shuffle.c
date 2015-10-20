@@ -30,7 +30,7 @@ const char RandomIntCeiling[MAXLEN-1]={99,98,99,99,95,97,95,98,99,98,95,90,97,89
 
 void usage(const char* arg)
 {
-    printf("Usage: %s [-f FILE] [NUMBER]\n", arg);
+    printf("Usage: %s [-e RUN_NUM] [-f FILE] [NUMBER]\n", arg);
 }
 
 int check_num(const char* arg)
@@ -141,11 +141,35 @@ void shuffle_arr(char* arr)
     }
 }
 
+// 从随机数发生器中获取随机数，以随机交换两张牌的方法生成随机牌局
+// !!! 此方法生成的牌局非随机 !!!
+void e_shuffle_arr(char* arr, int run)
+{
+    int i,j,t;
+    char temp;
+
+    for(t=0; t<run; t++)
+    {
+	i = rand() % MAXLEN;
+	j = rand() % (MAXLEN-1);
+
+	if(j >= i)
+	{
+	    j++;
+	}
+
+	temp = arr[i];
+	arr[i] = arr[j];
+	arr[j] = temp;
+    }
+}
+
 int main(int argc,char *argv[])
 {
     int i, rep_i, rep=-1;
     char tempArr[MAXLEN]={0};
     int file_n=0;
+    int exchange_n=0;
 
     if(argc==1)
     {
@@ -166,20 +190,33 @@ int main(int argc,char *argv[])
 		usage(argv[0]);
 		return 1;
 	    }
+	}
+
+	else if(strcmp(argv[i], "-e")==0)
+	{
+	    /* 若 -e 是最后一个参数或者后面跟的不是数字 */
+	    if(++i >= argc || !check_num(argv[i]))
+	    {
+		usage(argv[0]);
+		return 1;
+	    }
 	    else
 	    {
-		continue;
+		exchange_n=atoi(argv[i]);
 	    }
 	}
 
-	if(!check_num(argv[i]))
+	else 
 	{
-	    usage(argv[0]);
-	    return 1;
-	}
-	else
-	{
-	    rep=atoi(argv[i]);
+	    if(!check_num(argv[i]))
+	    {
+		usage(argv[0]);
+		return 1;
+	    }
+	    else
+	    {
+		rep=atoi(argv[i]);
+	    }
 	}
     }
 
@@ -204,11 +241,23 @@ int main(int argc,char *argv[])
     // 使用系统的随机数发生器
     else
     {
-	for(rep_i=0; rep_i<rep; rep_i++)
+	if(exchange_n>0)
 	{
-	    strncpy(tempArr, OriginArr, MAXLEN);
-	    shuffle_arr(tempArr);
-	    print_arr(tempArr);
+	    for(rep_i=0; rep_i<rep; rep_i++)
+	    {
+		strncpy(tempArr, OriginArr, MAXLEN);
+		e_shuffle_arr(tempArr, exchange_n);
+		print_arr(tempArr);
+	    }
+	}
+	else
+	{
+	    for(rep_i=0; rep_i<rep; rep_i++)
+	    {
+		strncpy(tempArr, OriginArr, MAXLEN);
+		shuffle_arr(tempArr);
+		print_arr(tempArr);
+	    }
 	}
     }
 
