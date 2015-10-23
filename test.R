@@ -34,6 +34,9 @@ value=c(2:9,0,"J","Q","K","A")
 # 长度为52的向量，分别表示每张牌
 cards <- unlist(lapply(shape, function(x){paste0(x, value)}))
 
+library(stringr, quietly=TRUE, warn.conflicts=FALSE)
+shuffle.out <- as.data.frame(lapply(shuffle.out, function(x){str_pad(match(x, cards), 2, side="left", pad="0")}))
+
 for(pos in 1:ncol(shuffle.out)) {
     freq.pos.table <- table(shuffle.out[,pos])
     # print(freq.pos.table)
@@ -54,4 +57,5 @@ library(ggplot2, quietly=TRUE, warn.conflicts=FALSE)
 plot.obj <- ggplot(freq.frame, aes(x=pos, y=freq, fill=card))+geom_bar(stat="identity", colour="white", width=1)+guides(fill=FALSE)+scale_x_continuous(breaks=1:26)
 ggsave(plot = plot.obj, filename=paste0(output.prefix,".",shuffle.length,".pdf"), height=6, width=8)
 
+detach('package:stringr')
 detach('package:ggplot2')
